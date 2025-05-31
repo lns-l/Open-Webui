@@ -28,6 +28,25 @@ Este repositório contém dois serviços Docker Compose separados para executar 
 - Docker Compose
 - `make` (opcional, mas recomendado)
 
+### 🎮 Suporte a GPU
+
+#### Pré-requisitos para GPU
+- NVIDIA: NVIDIA Container Toolkit
+- AMD: ROCm Container Toolkit
+- Intel: Intel oneAPI Base Toolkit
+
+#### Usando com GPU
+```bash
+# Com GPU NVIDIA
+USE_GPU=true GPU_DRIVER=nvidia make up-gpu
+
+# Com GPU AMD
+USE_GPU=true GPU_DRIVER=rocm make up-gpu
+
+# Com CPU
+make up
+```
+
 ### Subindo os serviços
 
 Para subir os dois containers:
@@ -58,7 +77,11 @@ make down
 ### Reiniciando os serviços
 
 ```bash
+# Com CPU
 make restart
+
+# Com GPU
+make restart-gpu
 ```
 
 ---
@@ -82,7 +105,7 @@ Esses diretórios armazenam os dados persistentes de cada serviço.
 
 ## ⚙️ Variáveis de ambiente
 
-Você pode definir variáveis como `OPEN_WEBUI_PORT` e `WEBUI_DOCKER_TAG` via `.env` ou diretamente no ambiente.
+Você pode definir variáveis como `OPEN_WEBUI_PORT`, `WEBUI_DOCKER_TAG`, `USE_GPU`, `GPU_DRIVER` e `GPU_COUNT` via `.env` ou diretamente no ambiente.
 
 ---
 

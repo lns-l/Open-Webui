@@ -5,6 +5,12 @@ services:
       - ollama:/root/.ollama
     ports:
       - "11434:11434"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     restart: always
 
   open-webui:
@@ -18,12 +24,13 @@ services:
     volumes:
       - open-webui:/app/backend/data
     depends_on:
-      - ollama
+      ollama:
+        condition: service_healthy
     ports:
       - ${OPEN_WEBUI_PORT-3000}:8080
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY='
+      - 'WEBUI_SECRET_KEY=abfa2037435a996bb41c5fdd1a79f09a58ea2259b7f02eda24fde0fb3b7fb637'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped

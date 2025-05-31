@@ -13,6 +13,12 @@ services:
               count: ${OLLAMA_GPU_COUNT-1}
               capabilities:
                 - gpu
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     restart: always
 
   open-webui:
@@ -26,12 +32,13 @@ services:
     volumes:
       - open-webui:/app/backend/data
     depends_on:
-      - ollama
+      ollama:
+        condition: service_healthy
     ports:
       - ${OPEN_WEBUI_PORT-3000}:8080
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY='
+      - 'WEBUI_SECRET_KEY=26bdc30ef8d4661ce74cd92930d476dbae6e4a8d9ed6b7529e7662ab70171e17'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
